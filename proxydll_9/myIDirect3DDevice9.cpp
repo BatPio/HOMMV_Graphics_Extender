@@ -128,6 +128,11 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
     // we may want to draw own things here before flipping surfaces
     // ... draw own stuff ...
 	this->ShowWeAreHere();
+
+	unsigned __int64 now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	if(now - this->lastShaderReload > 20000) {
+		initPipeline();
+	}
     
     // call original routine
 	HRESULT hres = m_pIDirect3DDevice9->Present( pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
@@ -252,7 +257,7 @@ HRESULT myIDirect3DDevice9::GetDepthStencilSurface(IDirect3DSurface9** ppZStenci
 
 HRESULT myIDirect3DDevice9::BeginScene(void)
 {
-    return(m_pIDirect3DDevice9->BeginScene());
+	return(m_pIDirect3DDevice9->BeginScene());
 }
 
 HRESULT myIDirect3DDevice9::EndScene(void)
@@ -535,10 +540,6 @@ HRESULT myIDirect3DDevice9::SetVertexShader(IDirect3DVertexShader9* pShader)
 		int index = -1;
 		std::string shaderHash = it->second;
 
-		if (this->forceReloadShaders) {
-			this->initPipeline();
-		}
-
 
 		if (shaderHash.compare("22442ea8") == 0) {
 			return(m_pIDirect3DDevice9->SetVertexShader(this->vsTerrainShader));
@@ -660,9 +661,6 @@ HRESULT myIDirect3DDevice9::SetPixelShader(IDirect3DPixelShader9* pShader)
 		int index = -1;
 		std::string shaderHash = it->second;
 
-		if (this->forceReloadShaders) {
-			this->initPipeline();
-		}
 		IDirect3DPixelShader9* disabledShader = NULL;
 		
 		if (disabledShader) {
@@ -853,7 +851,7 @@ void myIDirect3DDevice9::initPipeline() {
 	//this->LoadVS("vsCastleMark.hlsl", this->vsCastleBuildingMark, this->mVSConstTable);
 	this->LoadVS(L"vsWater.hlsl", this->vsWater, this->mVSConstTable);
 
-	this->forceReloadShaders = false;
+	this->lastShaderReload = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 void myIDirect3DDevice9::fogEnable(DWORD Color, DWORD Mode)

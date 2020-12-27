@@ -141,8 +141,8 @@ private:
 	LPDIRECT3DVERTEXSHADER9 vsTerrainShader = NULL;
 	LPDIRECT3DVERTEXSHADER9 vsCastleBuildingMark = NULL;
 	LPDIRECT3DVERTEXSHADER9 vsWater = NULL;
-
-	bool forceReloadShaders = true;
+    
+    unsigned __int64 lastShaderReload = 0;
 
 	std::string disabledCrc = "000000";
 

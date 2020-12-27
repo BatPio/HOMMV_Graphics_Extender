@@ -14,6 +14,7 @@
 #include <tchar.h> 
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 #define D3D_DEBUG_INFO
 #include <d3d9.h>

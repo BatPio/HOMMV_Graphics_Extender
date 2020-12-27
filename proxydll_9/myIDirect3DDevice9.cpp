@@ -753,20 +753,20 @@ void myIDirect3DDevice9::LoadVS(LPCWSTR file, LPDIRECT3DVERTEXSHADER9& mVShader,
 	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "main", "vs_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSCTable);
 	if (errorBuffer)
 	{
-		//MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
+    	clog_warn(CLOG(LOG), "Vertex shader loading error\n%s", errorBuffer->GetBufferPointer());
 		errorBuffer->Release();
 	}
 
 	if (FAILED(hr))
 	{
-		//MessageBox(NULL, L"D3DXCompileShaderFromFile - failed", 0, 0);
+		clog_warn(CLOG(LOG), "D3DXCompileShaderFromFile - failed");
 		return;
 	}
 
 	hr = this->m_pIDirect3DDevice9->CreateVertexShader((DWORD*)pShader->GetBufferPointer(), &mVShader);
 	if (FAILED(hr))
 	{
-		//MessageBox(NULL, L"CreateVertexShader - failed", 0, 0);
+		clog_warn(CLOG(LOG), "CreateVertexShader - failed");
 		return;
 	}
 
@@ -780,20 +780,20 @@ void myIDirect3DDevice9::LoadPS(LPCWSTR file, LPDIRECT3DPIXELSHADER9& mVShader, 
 	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "ps_main", "ps_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSCTable);
 	if (errorBuffer)
 	{
-		//MessageBox(NULL, (LPCWSTR)errorBuffer->GetBufferPointer(), 0, 0);
+		clog_warn(CLOG(LOG), "Pixel shader loading error\n%s", errorBuffer->GetBufferPointer());
 		errorBuffer->Release();
 	}
 
 	if (FAILED(hr))
 	{
-		//MessageBox(NULL, L"D3DXCompileShaderFromFile - failed", 0, 0);
+		clog_warn(CLOG(LOG), "D3DXCompileShaderFromFile - failed");
 		return;
 	}
 
 	hr = this->m_pIDirect3DDevice9->CreatePixelShader((DWORD*)pShader->GetBufferPointer(), &mVShader);
 	if (FAILED(hr))
 	{
-		//MessageBox(NULL, L"CreateVertexShader - failed", 0, 0);
+		clog_warn(CLOG(LOG), "CreatePixelShader - failed");
 		return;
 	}
 

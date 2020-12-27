@@ -4,6 +4,10 @@
 #pragma comment (lib, "d3d9.lib")
 #pragma comment (lib, "d3dx9.lib")
 
+#include "clog.h"
+
+const int LOG = 0; /* Unique identifier for logger */
+
 #define WIN32_LEAN_AND_MEAN		
 #include <windows.h>
 #include <windowsx.h>

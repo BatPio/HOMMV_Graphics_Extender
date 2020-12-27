@@ -1,3 +1,4 @@
+#define CLOG_MAIN
 // proxydll.cpp
 #include "stdafx.h"
 #include "proxydll.h"
@@ -38,7 +39,7 @@ IDirect3D9* WINAPI Direct3DCreate9(UINT SDKVersion)
     // Debug
 	if (!D3DCreate9_fn) 
     {
-        OutputDebugString(L"PROXYDLL: Pointer to original D3DCreate9 function not received ERROR ****\r\n");
+        clog_debug(CLOG(LOG), "PROXYDLL: Pointer to original D3DCreate9 function not received ERROR");
         ::ExitProcess(0); // exit the hard way
     }
 	
@@ -55,7 +56,10 @@ IDirect3D9* WINAPI Direct3DCreate9(UINT SDKVersion)
 
 void InitInstance(HANDLE hModule) 
 {
-	OutputDebugString(L"PROXYDLL: InitInstance called.\r\n");
+	clog_init_path(LOG, "HOMM5GE_LOG.txt");
+	clog_set_level(LOG, CLOG_DEBUG);
+
+    clog_debug(CLOG(LOG), "PROXYDLL: InitInstance called.");
 	
 	// Initialisation
 	gl_hOriginalDll        = NULL;
@@ -83,14 +87,14 @@ void LoadOriginalDll(void)
 	// Debug
 	if (!gl_hOriginalDll)
 	{
-		OutputDebugString(L"PROXYDLL: Original d3d9.dll not loaded ERROR ****\r\n");
+		clog_debug(CLOG(LOG), "PROXYDLL: Original d3d9.dll not loaded ERROR");
 		::ExitProcess(0); // exit the hard way
 	}
 }
 
 void ExitInstance() 
 {    
-    OutputDebugString(L"PROXYDLL: ExitInstance called.\r\n");
+    clog_debug(CLOG(LOG), "PROXYDLL: ExitInstance called");
 	
 	// Release the system's d3d9.dll
 	if (gl_hOriginalDll)
@@ -98,5 +102,8 @@ void ExitInstance()
 		::FreeLibrary(gl_hOriginalDll);
 	    gl_hOriginalDll = NULL;  
 	}
+
+	/* Clean up */
+    clog_free(LOG);
 }
 

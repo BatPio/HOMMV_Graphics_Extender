@@ -1,0 +1,33 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "Build dll",
+			"command": "C:/MinGW/bin/g++.exe",
+			"args": [
+				"-shared",
+				"${workspaceFolder}\\*.cpp",
+				"${workspaceFolder}\\proxydll.def",
+				"-o",
+				"D:\\Laptop\\Gry\\HOMM5GE\\bin\\d3d9.dll",
+				"-IC:\\SDK\\Dx9Sdk\\Include",
+				"-LC:\\SDK\\Dx9Sdk\\Lib\\x86",
+				"-O0",
+				"-DUNICODE",
+				"-ld3d9",
+				"-ld3dx9",
+				"-mwindows",
+				"-ggdb"
+			],
+			"options": {
+				"cwd": "C:/MinGW/bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: C:/MinGW/bin/g++.exe"
+		}
+	]
+}

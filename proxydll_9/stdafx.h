@@ -4,7 +4,7 @@
 #pragma comment (lib, "d3d9.lib")
 #pragma comment (lib, "d3dx9.lib")
 
-#include "clog.h"
+#include "3rd-party-libs/clog/clog.h"
 
 const int LOG = 0; /* Unique identifier for logger */
 
@@ -23,6 +23,6 @@ const int LOG = 0; /* Unique identifier for logger */
 #define D3D_DEBUG_INFO
 #include <d3d9.h>
 #include <d3dx9.h>
-#include "crc32.h"
+#include "3rd-party-libs/crc32/crc32.h"
 #include "myIDirect3D9.h"
 #include "myIDirect3DDevice9.h"

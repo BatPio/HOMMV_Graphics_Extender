@@ -8,6 +8,7 @@
 			"args": [
 				"-shared",
 				"${workspaceFolder}\\*.cpp",
+				"${workspaceFolder}\\3rd-party-libs\\crc32\\*.cpp",
 				"${workspaceFolder}\\proxydll.def",
 				"-o",
 				"D:\\Laptop\\Gry\\HOMM5GE\\bin\\d3d9.dll",

@@ -159,7 +159,7 @@ private:
 	void LoadVS(LPCWSTR file, LPDIRECT3DVERTEXSHADER9& mVShader, LPD3DXCONSTANTTABLE& mVSCTable);
 	void LoadPS(LPCWSTR file, LPDIRECT3DPIXELSHADER9& mPShader, LPD3DXCONSTANTTABLE& mVSCTable);
 	void fogEnable(DWORD Color, DWORD Mode);
-	std::vector<std::string> listDir(std::string folder);
+	std::vector<std::wstring> listDir(std::wstring folder);
 };
 
 

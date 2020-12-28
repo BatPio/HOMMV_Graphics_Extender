@@ -130,7 +130,7 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 	this->ShowWeAreHere();
 
 	unsigned __int64 now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	if(now - this->lastShaderReload > 20000) {
+	if(now - this->lastShaderReload > 10000) {
 		initPipeline();
 	}
     
@@ -541,7 +541,7 @@ HRESULT myIDirect3DDevice9::SetVertexShader(IDirect3DVertexShader9* pShader)
 		std::string shaderHash = it->second;
 
 
-		if (shaderHash.compare("22442ea8") == 0) {
+		/*if (shaderHash.compare("22442ea8") == 0) {
 			return(m_pIDirect3DDevice9->SetVertexShader(this->vsTerrainShader));
 		}
 		if (shaderHash.compare("d643e9a1") == 0) {
@@ -549,6 +549,11 @@ HRESULT myIDirect3DDevice9::SetVertexShader(IDirect3DVertexShader9* pShader)
 		}
 		if (shaderHash.compare("e8c2210e") == 0) {
 			return(m_pIDirect3DDevice9->SetVertexShader(this->vsCastleBuildingMark));
+		}*/
+
+		std::map<std::string, IDirect3DVertexShader9*>::iterator shaderMod = this->vsShaderMods.find(shaderHash);
+		if (shaderMod != this->vsShaderMods.end()) {
+			return(m_pIDirect3DDevice9->SetVertexShader(shaderMod->second));
 		}
 	}
 
@@ -671,12 +676,16 @@ HRESULT myIDirect3DDevice9::SetPixelShader(IDirect3DPixelShader9* pShader)
 		//if (shaderHash.compare("0ac324ad")==0) {
 		//	return(m_pIDirect3DDevice9->SetPixelShader(this->waterShader));
 		//}
-		if (shaderHash.compare("9856d352") == 0) {
+		std::map<std::string, IDirect3DPixelShader9*>::iterator shaderMod = this->psShaderMods.find(shaderHash);
+		if (shaderMod != this->psShaderMods.end()) {
+			return(m_pIDirect3DDevice9->SetPixelShader(shaderMod->second));
+		}
+		/*if (shaderHash.compare("9856d352") == 0) {
 			return(m_pIDirect3DDevice9->SetPixelShader(this->terrainShader));
 		}
 		else if (shaderHash.compare(this->disabledCrc) == 0){
 			return(m_pIDirect3DDevice9->SetPixelShader(this->idleShader));
-		}
+		}*/
 	}
 
 	
@@ -777,7 +786,7 @@ void myIDirect3DDevice9::LoadPS(LPCWSTR file, LPDIRECT3DPIXELSHADER9& mVShader, 
 	LPD3DXBUFFER pShader = NULL;
 	LPD3DXBUFFER errorBuffer = 0;
 
-	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "ps_main", "ps_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSCTable);
+	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "main", "ps_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSCTable);
 	if (errorBuffer)
 	{
 		clog_warn(CLOG(LOG), "Pixel shader loading error\n%s", errorBuffer->GetBufferPointer());
@@ -814,24 +823,38 @@ std::string myIDirect3DDevice9::LoadShaderFile(std::string File)
 }
 
 void myIDirect3DDevice9::initPipeline() {
-
-	/*std::vector<std::string> vsFiles = this->listDir("./GE/Shaders/VS");
+	this->vsShaderMods.clear();
+    std::wstring vsDir(L"C:/Workspace/HOMMV_Graphics_Extender/reverse_engineering/hlsl/VertexShader");
+	std::vector<std::wstring> vsFiles = this->listDir(vsDir);
 	for (int i = 0; i < vsFiles.size(); i++) {
 		LPDIRECT3DVERTEXSHADER9 vsShader = NULL;
 		LPD3DXCONSTANTTABLE mVSConstTable;
-		std::string fileName = vsFiles.at(i);
-		this->LoadVS(fileName.c_str(), vsShader, mVSConstTable);
-		this->vsShaderMods.insert(std::pair<std::string, IDirect3DVertexShader9*>(fileName, vsShader));
+		std::wstring fileName = vsFiles.at(i);
+		std::wstring filePath = vsDir + L"/" + fileName;
+		this->LoadVS(filePath.c_str(), vsShader, mVSConstTable);
+		std::wstring fileNameWithoutEx = fileName.substr(0, fileName.size() - 5);
+		std::string crc(fileNameWithoutEx.begin(), fileNameWithoutEx.end());
+		std::transform(crc.begin(), crc.end(), crc.begin(), ::tolower);
+		if(vsShader) {
+			this->vsShaderMods.insert(std::pair<std::string, IDirect3DVertexShader9*>(crc, vsShader));
+		}
 	}
 
-
-	std::vector<std::string> psFiles = this->listDir("./GE/Shaders/PS");
+	this->psShaderMods.clear();
+	std::wstring psDir(L"C:/Workspace/HOMMV_Graphics_Extender/reverse_engineering/hlsl/PixelShader");
+	std::vector<std::wstring> psFiles = this->listDir(psDir);
 	for (int i = 0; i < psFiles.size(); i++) {
 		LPDIRECT3DPIXELSHADER9 psShader = NULL;
 		LPD3DXCONSTANTTABLE mPSConstTable;
-		std::string fileName = psFiles.at(i);
-		this->LoadPS(fileName.c_str(), psShader, mPSConstTable);
-		this->psShaderMods.insert(std::pair<std::string, IDirect3DPixelShader9*>(fileName, psShader));
+		std::wstring fileName = psFiles.at(i);
+		std::wstring filePath = psDir + L"/" + fileName;
+		this->LoadPS(filePath.c_str(), psShader, mPSConstTable);
+		std::wstring fileNameWithoutEx = fileName.substr(0, fileName.size() - 5);
+		std::string crc(fileNameWithoutEx.begin(), fileNameWithoutEx.end());
+		std::transform(crc.begin(), crc.end(), crc.begin(), ::tolower);
+		if(psShader) {
+			this->psShaderMods.insert(std::pair<std::string, IDirect3DPixelShader9*>(crc, psShader));
+		}
 	}
 	/*std::string vsBuffer = this->LoadShaderFile("vs.txt");
 	std::string psBuffer = this->LoadShaderFile("ps.txt");
@@ -843,13 +866,13 @@ void myIDirect3DDevice9::initPipeline() {
 		DWORD* buffer = (avsBuffer) ? (DWORD*)avsBuffer->GetBufferPointer() : 0;
 		//D3DXCompileShaderFromFile
 	CreatePixelShader((DWORD*)avsBuffer->GetBufferPointer(), &vShader);*/
-	this->LoadPS(L"GreenShader.ps", this->greenShader, this->mVSConstTable);
-	this->LoadPS(L"Idle.ps", this->idleShader, this->mVSConstTable);
+	//this->LoadPS(L"GreenShader.ps", this->greenShader, this->mVSConstTable);
+	//this->LoadPS(L"Idle.ps", this->idleShader, this->mVSConstTable);
 	//this->LoadPS("water.hlsl", this->waterShader, this->mVSConstTable);
-	this->LoadPS(L"terrain.hlsl", this->terrainShader, this->mVSConstTable);
-	this->LoadVS(L"vsTerrain.hlsl", this->vsTerrainShader, this->mVSConstTable);
+	//this->LoadPS(L"terrain.hlsl", this->terrainShader, this->mVSConstTable);
+	//this->LoadVS(L"vsTerrain.hlsl", this->vsTerrainShader, this->mVSConstTable);
 	//this->LoadVS("vsCastleMark.hlsl", this->vsCastleBuildingMark, this->mVSConstTable);
-	this->LoadVS(L"vsWater.hlsl", this->vsWater, this->mVSConstTable);
+	//this->LoadVS(L"vsWater.hlsl", this->vsWater, this->mVSConstTable);
 
 	this->lastShaderReload = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
@@ -882,17 +905,18 @@ void myIDirect3DDevice9::fogEnable(DWORD Color, DWORD Mode)
 }
 
 
-std::vector<std::string> myIDirect3DDevice9::listDir(std::string folder) {
-	std::vector<std::string> names;
-	std::string search_path = folder + "/*.*";
+std::vector<std::wstring> myIDirect3DDevice9::listDir(std::wstring folder) {
+	std::vector<std::wstring> names;
 	WIN32_FIND_DATA fd;
-	HANDLE hFind = ::FindFirstFile((LPCWSTR)search_path.c_str(), &fd);
+	std::wstring search_path = folder + L"/*.*";
+	HANDLE hFind = ::FindFirstFile(search_path.c_str(), &fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
 			// read all (real) files in current folder
 			// , delete '!' read other 2 default folder . and ..
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-				//names.push_back(std::wstring(fd.cFileName.));
+				std::wstring fileNameString(fd.cFileName);
+				names.push_back(fileNameString);
 			}
 		} while (::FindNextFile(hFind, &fd));
 		::FindClose(hFind);

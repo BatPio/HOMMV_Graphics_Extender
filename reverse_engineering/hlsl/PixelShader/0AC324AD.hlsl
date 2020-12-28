@@ -2,7 +2,7 @@ sampler anisoDirMap: register(s0);
 sampler anisoLookup: register(s2);
 sampler baseMap: register(s3);
 
-float4 ps_main(
+float4 main(
 	//Anisotropic lighting directions map
 	float2 anisoTexCoord : TEXCOORD0,
 	//Light tangent

@@ -1,3 +1,5 @@
+//tress, buildings on terrain
+//dorobić vs dla drzew bo budynki i drzewa trafiają tutaj
 sampler samp0: register(s0);
 
 float4 main( float2 tex0 : TEXCOORD0, //tekstura podstawowa

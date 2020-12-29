@@ -1,3 +1,5 @@
+//water
+
 sampler anisoDirMap: register(s0);
 sampler anisoLookup: register(s2);
 sampler baseMap: register(s3);

@@ -1,3 +1,9 @@
+/*  
+    ps_1_1
+    tex t0
+    mul_x4_sat r0.xyz, v1, t0
+  + mul r0.w, t0.w, v0.w*/
+
 //tress, buildings on terrain
 //dorobić vs dla drzew bo budynki i drzewa trafiają tutaj
 sampler samp0: register(s0);

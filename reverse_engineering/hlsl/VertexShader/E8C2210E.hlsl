@@ -1,3 +1,5 @@
+//building selection
+
 sampler samp0: register(s0);
 sampler samp1: register(s1);
 

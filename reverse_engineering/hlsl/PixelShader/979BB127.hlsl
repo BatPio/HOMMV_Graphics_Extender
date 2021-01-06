@@ -1,4 +1,4 @@
-float4 main(float4 color : COLOR) : COLOR
+float4 main(float4 color : COLOR0) : COLOR0
 {
 	return color.w;
 }

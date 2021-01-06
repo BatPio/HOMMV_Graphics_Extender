@@ -29,9 +29,10 @@ float4 main( float2 tex0 : TEXCOORD0, //tekstura podstawowa
 	float3 shadow = saturate(texPix0 * color0 * 4);
 	//float3 shadow = texPix0;
 	//float3 fullSun = lerp(saturate(texPix0 * color1 * 4), shadow, //texPix0);
-	float3 fullSun = lerp(saturate(texPix0 * color1 * 4), shadow, texPix0);
-	
 	float4 texPix1 = tex2D(samp1, tex1);
+	float3 fullSun = lerp( shadow, saturate(texPix0 * color1 * 4), texPix1);
+	
+
 	float warunek = p4.w + saturate((texPix1.w - tex2.z) * 4); //mapa cienia
 	//float warunek = tex2.y; 
 	
@@ -45,8 +46,8 @@ float4 main( float2 tex0 : TEXCOORD0, //tekstura podstawowa
 	result.xyz = (warunek > 0.5f) ? shadow : fullSun;
 	
 	 // Calculate the final color using the fog effect equation.
-	float4 fogColor = {0.607843f, 0.917647f, 0.941176f, 1.0f};
-	result.xyz = fogFactor * result.xyz + (1.0 - fogFactor);
+	//float4 fogColor = {0.607843f, 0.917647f, 0.941176f, 1.0f};
+	//result.xyz = fogFactor * result.xyz + (1.0 - fogFactor);
 
 	
 	//result.xyz = green;

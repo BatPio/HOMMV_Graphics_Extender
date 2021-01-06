@@ -20,7 +20,7 @@
 // approximately 8 instruction slots used
  */
 
- uniform float4x4 ModelViewMatrix : register(c10); //x4
+uniform float4x4 ModelViewMatrix : register(c10); //x4
 float4 diffuseColor : register(c16); //Kolor zaznaczenia
 float4 p25 : register(c25);
 float4 p26 : register(c26);
@@ -53,7 +53,7 @@ VS_OUTPUT  main(VS_INPUT input) {
     float2 posFactor;
     posFactor.x = dot(input.vPosition, p26);
     posFactor.y = dot(input.vPosition, p25);
-    output.vPosition.xy = mad(posFactor.xyyy, p27.xyyy, p27.zwww);
+    output.vPosition.xy = mad(posFactor.xyyy, p27.xyyy, p27.zwww); //bryla cienia
     output.vPosition.z = dot(input.vPosition , p17);
     output.vPosition.w = p1;
 

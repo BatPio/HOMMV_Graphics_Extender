@@ -125,7 +125,9 @@ HRESULT myIDirect3DDevice9::Reset(D3DPRESENT_PARAMETERS* pPresentationParameters
 
 HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRect,HWND hDestWindowOverride,CONST RGNDATA* pDirtyRegion)
 {
-    // we may want to draw own things here before flipping surfaces
+    
+	clog_debug(CLOG(LOG),  "Present");
+	// we may want to draw own things here before flipping surfaces
     // ... draw own stuff ...
 	this->ShowWeAreHere();
 
@@ -257,6 +259,7 @@ HRESULT myIDirect3DDevice9::GetDepthStencilSurface(IDirect3DSurface9** ppZStenci
 
 HRESULT myIDirect3DDevice9::BeginScene(void)
 {
+	clog_debug(CLOG(LOG),  "BeginScene");
 	return(m_pIDirect3DDevice9->BeginScene());
 }
 
@@ -373,12 +376,14 @@ HRESULT myIDirect3DDevice9::GetClipStatus(D3DCLIPSTATUS9* pClipStatus)
 
 HRESULT myIDirect3DDevice9::GetTexture(DWORD Stage,IDirect3DBaseTexture9** ppTexture)
 {
-    return(m_pIDirect3DDevice9->GetTexture(Stage,ppTexture));
+    clog_debug(CLOG(LOG),  "                                 GetTexture: %d %d", Stage, ppTexture);
+	return(m_pIDirect3DDevice9->GetTexture(Stage,ppTexture));
 }
 
 HRESULT myIDirect3DDevice9::SetTexture(DWORD Stage,IDirect3DBaseTexture9* pTexture)
 {
-    return(m_pIDirect3DDevice9->SetTexture(Stage,pTexture));
+    clog_debug(CLOG(LOG),  "                                 SetTexture: %d %d", Stage, pTexture);
+	return(m_pIDirect3DDevice9->SetTexture(Stage,pTexture));
 }
 
 HRESULT myIDirect3DDevice9::GetTextureStageState(DWORD Stage,D3DTEXTURESTAGESTATETYPE Type,DWORD* pValue)
@@ -550,7 +555,7 @@ HRESULT myIDirect3DDevice9::SetVertexShader(IDirect3DVertexShader9* pShader)
 		if (shaderHash.compare("e8c2210e") == 0) {
 			return(m_pIDirect3DDevice9->SetVertexShader(this->vsCastleBuildingMark));
 		}*/
-
+		clog_debug(CLOG(LOG),  "SetVertexShader: %s", shaderHash.c_str());
 		std::map<std::string, IDirect3DVertexShader9*>::iterator shaderMod = this->vsShaderMods.find(shaderHash);
 		if (shaderMod != this->vsShaderMods.end()) {
 			return(m_pIDirect3DDevice9->SetVertexShader(shaderMod->second));
@@ -673,6 +678,7 @@ HRESULT myIDirect3DDevice9::SetPixelShader(IDirect3DPixelShader9* pShader)
 			std::string newDisabledHash = it->second;
 			this->disabledCrc = newDisabledHash;
 		}
+		clog_debug(CLOG(LOG),  "     SetPixelShader: %s", shaderHash.c_str());
 		//if (shaderHash.compare("0ac324ad")==0) {
 		//	return(m_pIDirect3DDevice9->SetPixelShader(this->waterShader));
 		//}
@@ -759,15 +765,14 @@ void myIDirect3DDevice9::LoadVS(LPCWSTR file, LPDIRECT3DVERTEXSHADER9& mVShader,
 	LPD3DXBUFFER pShader = NULL;
 	LPD3DXBUFFER errorBuffer = 0;
 
-	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "main", "vs_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSCTable);
-	if (errorBuffer)
-	{
-    	clog_warn(CLOG(LOG), "Vertex shader loading error\n%s", errorBuffer->GetBufferPointer());
-		errorBuffer->Release();
-	}
-
+	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "main", "vs_1_1", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSCTable);
 	if (FAILED(hr))
 	{
+		if (errorBuffer)
+		{
+			clog_warn(CLOG(LOG), "Vertex shader loading error\n%s", errorBuffer->GetBufferPointer());
+			errorBuffer->Release();
+		}
 		clog_warn(CLOG(LOG), "D3DXCompileShaderFromFile - failed");
 		return;
 	}
@@ -786,16 +791,16 @@ void myIDirect3DDevice9::LoadPS(LPCWSTR file, LPDIRECT3DPIXELSHADER9& mVShader, 
 	LPD3DXBUFFER pShader = NULL;
 	LPD3DXBUFFER errorBuffer = 0;
 
-	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "main", "ps_3_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSCTable);
-	if (errorBuffer)
-	{
-		clog_warn(CLOG(LOG), "Pixel shader loading error\n%s", errorBuffer->GetBufferPointer());
-		errorBuffer->Release();
-	}
+	HRESULT hr = D3DXCompileShaderFromFile(file, 0, 0, "main", "ps_2_0", D3DXSHADER_DEBUG, &pShader, &errorBuffer, &mVSCTable);
 
 	if (FAILED(hr))
 	{
 		clog_warn(CLOG(LOG), "D3DXCompileShaderFromFile - failed");
+		if (errorBuffer)
+		{
+			clog_warn(CLOG(LOG), "Pixel shader loading error\n%s", errorBuffer->GetBufferPointer());
+			errorBuffer->Release();
+		}
 		return;
 	}
 

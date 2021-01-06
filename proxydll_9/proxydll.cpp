@@ -57,7 +57,7 @@ IDirect3D9* WINAPI Direct3DCreate9(UINT SDKVersion)
 void InitInstance(HANDLE hModule) 
 {
 	clog_init_path(LOG, "HOMM5GE_LOG.txt");
-	clog_set_level(LOG, CLOG_DEBUG);
+	clog_set_level(LOG, CLOG_INFO);
 
     clog_debug(CLOG(LOG), "PROXYDLL: InitInstance called.");
 	
